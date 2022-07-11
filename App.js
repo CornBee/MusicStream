@@ -1,20 +1,55 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+//import react hooks
+import React, {useEffect, useState} from 'react';
+import {Text, Button} from 'react-native';
+//import the TrackPlayer  
+import TrackPlayer from 'react-native-track-player';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+//function to initialize the Track Player 
+const trackPlayerInit = async () => {
+ await TrackPlayer.setupPlayer();
+ await TrackPlayer.add({
+   id: '1',
+   url:
+     'https://audio-previews.elements.envatousercontent.com/files/103682271/preview.mp3',
+   type: 'default',
+   title: 'My Title',
+   album: 'My Album',
+   artist: 'Rohan Bhatia',
+   artwork: 'https://picsum.photos/100',
+ });
+ return true;
+};
+ 
+const App = () => {
+ 
+ //state to manage whether track player is initialized or not
+ const [isTrackPlayerInit, setIsTrackPlayerInit] = useState(false);
+ 
+ //initialize the TrackPlayer when the App component is mounted
+ useEffect(() => {
+   const startPlayer = async () => {
+      let isInit =  await trackPlayerInit();
+      setIsTrackPlayerInit(isInit);
+   }
+   startPlayer();
+ }, []);
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+//start playing the TrackPlayer when the button is pressed 
+const onButtonPressed = () => {
+   TrackPlayer.play();
+ };
+ 
+ 
+ return (
+   <>
+     <Text>Music Player</Text>
+     <Button
+       title="Play"
+       onPress={onButtonPressed}
+       disabled={!isTrackPlayerInit}
+     />
+   </>
+ );
+};
+ 
+export default App;
